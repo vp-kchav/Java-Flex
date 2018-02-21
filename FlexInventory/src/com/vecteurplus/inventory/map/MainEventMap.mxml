@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns="http://mate.asfusion.com/"
+		 xmlns:mxml="org.granite.rpc.remoting.mxml.*"
+		 xmlns:map="com.vecteurplus.inventory.map.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.asfusion.mate.utils.debug.Debugger;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<Debugger level="{Debugger.ERROR}"/>
+		<mxml:SecureRemoteObject id="secureRemoteObject" endpoint="http://localhost:8585/inventory/graniteamf/amf"/>
+		
+		<map:CategoryEventMap secureRemoteObject="{secureRemoteObject}"/>
+		<map:ProductEventMap secureRemoteObject="{secureRemoteObject}"/>
+		<map:StockEventMap secureRemoteObject="{secureRemoteObject}"/>
+		
+	</fx:Declarations>
+	
+</s:Group>

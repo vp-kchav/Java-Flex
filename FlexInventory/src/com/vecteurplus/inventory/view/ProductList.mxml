@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 doubleClickEnabled="true"
+		 creationComplete="init()">
+		
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.ProductEvent;
+			import com.vecteurplus.inventory.model.Product;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			
+			private var _products:ArrayCollection;
+			private var productFormPopUp:ProductFormPopUp = new ProductFormPopUp();
+			
+			public function set products(pros:ArrayCollection):void {
+				_products = pros;
+			}
+			
+			[Bindable]
+			public function get products():ArrayCollection {
+				return _products;
+			}
+			
+			public function init():void {
+				var productEvent:ProductEvent = new ProductEvent(ProductEvent.GET_ALL_PRODUCTS);
+				dispatchEvent(productEvent);
+			}
+			
+			protected function showPopUpEvent(event:MouseEvent):void {
+				var product:Product = productList.selectedItem as Product;
+				var productEvent:ProductEvent = new ProductEvent(ProductEvent.DISPLAY_SELECTED_PRODUCT);
+				productEvent.product = product;
+				dispatchEvent(productEvent);
+				PopUpManager.addPopUp(productFormPopUp, this, true);
+				PopUpManager.centerPopUp(productFormPopUp);
+			}
+			
+			protected function productListClickEvent(event:Event):void {
+				var product:Product = productList.selectedItem as Product;
+				var productEvent:ProductEvent = new ProductEvent(ProductEvent.GET_SELECTED_PRODUCT);
+				productEvent.product = product;
+				dispatchEvent(productEvent);
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:DataGrid id="productList" width="100%" height="100%" dataProvider="{products}"
+				 click="productListClickEvent(event)"
+				 doubleClick="showPopUpEvent(event)">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Product_Id"
+							   dataField="id"/>
+			<mx:DataGridColumn headerText="Product_Name"
+							   dataField="name"/>
+			<mx:DataGridColumn headerText="Product_Code"
+							   dataField="code"/>
+			<mx:DataGridColumn headerText="Product_Cost"
+							   dataField="cost"/>
+			<mx:DataGridColumn headerText="Product_Price"
+							   dataField="price"/>
+			<!--possible??? -->
+			<mx:DataGridColumn headerText="Category"
+							   dataField="category.name"/>
+			<mx:DataGridColumn headerText="Product_Desc"
+							   dataField="description"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+</s:Group>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:Array id="validators">
+			<mx:StringValidator source="{txtName}"
+								property="text"
+								required="true"
+								minLength="5"
+								maxLength="30"/>
+			<mx:StringValidator source="{txtCode}"
+								property="text"
+								required="true"
+								minLength="5"
+								maxLength="10"/>
+		</fx:Array>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.CategoryEvent;
+			import com.vecteurplus.inventory.model.Category;
+			
+			import mx.controls.Alert;
+			import mx.validators.Validator;
+			
+			private function saveEvent(event:MouseEvent):void {
+				var category:Category = new Category();
+				category.name = txtName.text;
+				category.code = txtCode.text;
+				
+				var errors:Array = Validator.validateAll(validators);
+				if(errors.length > 0) {
+					Alert.show("Please fill in all required fields");
+				}
+				else {
+					var categoryEvent:CategoryEvent = new CategoryEvent(CategoryEvent.SAVE_CATEGORY);
+					categoryEvent.category = category;
+					dispatchEvent(categoryEvent);
+					clearControls();
+				}
+			}
+			
+			public function clearControls():void {
+				txtName.text = "";
+				txtCode.text = "";
+			}
+		]]>
+	</fx:Script>
+		
+	<mx:Form>
+		<mx:FormHeading label="Category Information Form"/>
+		<mx:FormItem label="Category_ID">
+			<s:TextInput id="txtId" enabled="false" text="Auto-Number" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Category_Name" required="true">
+			<s:TextInput id="txtName" restrict="a-z A-Z0-9" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Category_Code" required="true">
+			<s:TextInput id="txtCode" restrict="A-Z0-9" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem horizontalAlign="center">
+			<s:Button id="btnSave" label="Save" click="saveEvent(event)"/>
+		</mx:FormItem>
+	</mx:Form>
+</s:Group>

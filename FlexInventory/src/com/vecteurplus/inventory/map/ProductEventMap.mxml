@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.CategoryEvent;
+			import com.vecteurplus.inventory.event.ProductEvent;
+			import com.vecteurplus.inventory.manager.CategoryManager;
+			import com.vecteurplus.inventory.manager.ProductManager;
+			import com.vecteurplus.inventory.view.ProductForm;
+			import com.vecteurplus.inventory.view.ProductFormPopUp;
+			import com.vecteurplus.inventory.view.ProductList;
+			import com.vecteurplus.inventory.view.StockForm;
+			
+			import org.granite.rpc.remoting.mxml.SecureRemoteObject;
+			
+			[Bindable]
+			public var secureRemoteObject:SecureRemoteObject;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<EventHandlers type="{ProductEvent.GET_ALL_PRODUCTS}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="productService"
+								 method="getAll"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{ProductManager}"
+								   method="storeProducts"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.SEARCH_PRODUCT}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="productService"
+								 method="getById"
+								 arguments="{event.productId}"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{ProductManager}"
+								   method="storeProducts"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.DISPLAY_SELECTED_PRODUCT}">
+			<MethodInvoker generator="{ProductManager}"
+						   method="storeUpdatedProduct"
+						   arguments="{event.product}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.GET_SELECTED_PRODUCT}">
+			<MethodInvoker generator="{ProductManager}"
+						   method="storeDeletedProduct"
+						   arguments="{event.product}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.SAVE_PRODUCT}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="productService"
+								 method="save"
+								 arguments="{event.product}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{ProductEvent.GET_ALL_PRODUCTS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.UPDATE_PRODUCT}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="productService"
+								 method="update"
+								 arguments="{event.product}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{ProductEvent.GET_ALL_PRODUCTS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{ProductEvent.DELETE_PRODUCT}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="productService"
+								 method="delete"
+								 arguments="{event.product.id}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{ProductEvent.GET_ALL_PRODUCTS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers> 
+		
+		<EventHandlers type="{CategoryEvent.GET_ALL_CATEGORIES}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="getAll"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{CategoryManager}"
+								   method="storeCategories"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<Injectors target="{ProductList}">
+			<PropertyInjector targetKey="products" source="{ProductManager}" sourceKey="currentProducts"/>
+		</Injectors>
+		
+		<Injectors target="{ProductFormPopUp}">
+			<PropertyInjector targetKey="product" source="{ProductManager}" sourceKey="updatedProduct"/>
+		</Injectors>
+		
+		<Injectors target="{ProductFormPopUp}">
+			<PropertyInjector targetKey="selectedProduct" source="{ProductManager}" sourceKey="deletedProduct"/>
+		</Injectors>
+		
+		<Injectors target="{ProductFormPopUp}">
+			<PropertyInjector targetKey="catList" source="{CategoryManager}" sourceKey="currentCategories"/>
+		</Injectors>
+		<!--<Injectors target="{ProductForm}">
+			<PropertyInjector targetKey="catList" source="{ProductManager}" sourceKey="storeCategories"/>
+		</Injectors>
+		
+		<Injectors target="{ProductFormPopUp}">
+			<PropertyInjector targetKey="catList" source="{ProductManager}" sourceKey="storeCategories"/>
+		</Injectors>-->
+		
+		<Injectors target="{StockForm}">
+			<PropertyInjector targetKey="proIdList" source="{ProductManager}" sourceKey="currentProducts"/>
+		</Injectors>
+	</fx:Declarations>
+	
+</EventMap>

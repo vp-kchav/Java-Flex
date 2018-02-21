@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.StockEvent;
+			
+			protected function stockSerachEvent(event:MouseEvent):void {
+				var stockEvent:StockEvent = new StockEvent(StockEvent.SEARCH_STOCK);
+				stockEvent.stockId = int(txtStockSearchBox.text);
+				dispatchEvent(stockEvent);
+			}
+		]]>
+	</fx:Script>
+	
+	<s:TextInput id="txtStockSearchBox"/>
+	<s:Button id="btnSearch" label="Search" click="stockSerachEvent(event)"/>
+</s:Group>

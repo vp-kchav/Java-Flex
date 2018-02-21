@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   close="PopUpManager.removePopUp(this)"
+			   updateComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.CategoryEvent;
+			import com.vecteurplus.inventory.event.ProductEvent;
+			import com.vecteurplus.inventory.model.Category;
+			import com.vecteurplus.inventory.model.Product;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			private var _catList:ArrayCollection;
+			private var _product:Product;
+			[Bindable]
+			private var _selectedProduct:Product; 
+			
+			public function set catList(catIds:ArrayCollection):void {
+				_catList = catIds;
+			}
+			
+			[Bindable]
+			public function get catList():ArrayCollection {
+				return _catList;
+			}
+			
+			public function set product(pro:Product):void {
+				_product = pro;
+			}
+			
+			[Bindable]
+			public function get product():Product {
+				return _product;
+			}
+			
+			 public function set selectedProduct(pro:Product):void {
+			_selectedProduct = pro;
+			}
+			
+			public function get selectedProduct():Product {
+			return _selectedProduct;
+			} 
+			
+			public function init():void {
+				txtId.text = String(product.id);
+				txtName.text = product.name;
+				txtCode.text = product.code;
+				txtCost.text = String(product.cost);
+				txtPrice.text = String(product.price);
+				cboCatId.itemToLabel(String(product.category.id));
+				txtDesc.text = String(product.description);
+			}
+			
+			private function closeEvent(event:MouseEvent):void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function getCatById(id:int):Category {
+				var categoryEvent:CategoryEvent = new CategoryEvent(CategoryEvent.GET_SELECTED_CATEGORY);
+				categoryEvent.categoryId = id;
+				dispatchEvent(categoryEvent);
+				return categoryEvent.category;
+			}
+			
+			private function updateEvent(event:MouseEvent):void {
+			var product:Product = new Product();
+			product.name = txtName.text;
+			product.code = txtCode.text;
+			product.cost = Number(txtCost.text);
+			product.price = Number(txtPrice.text);
+			product.description = txtDesc.text;
+			product.category = cboCatId.selectedItem as Category;
+			
+			var productEvent:ProductEvent = new ProductEvent(ProductEvent.UPDATE_PRODUCT);
+			productEvent.product = product;
+			dispatchEvent(productEvent);
+			}
+			
+			private function confirmDeleteEvent(event:MouseEvent):void {
+			Alert.show('Are you sure you want to delete this product', null, 
+			Alert.OK | Alert.CANCEL, this, deleteEvent, null, Alert.OK);  
+			}
+			
+			private function deleteEvent(obj:CloseEvent):void {
+				if(obj.detail == Alert.OK) {
+					var productEvent:ProductEvent = new ProductEvent(ProductEvent.DELETE_PRODUCT);
+					productEvent.product = selectedProduct;
+					dispatchEvent(productEvent);
+				}
+			} 
+			
+		]]>
+	</fx:Script>
+	
+	<mx:Form>
+		<mx:FormHeading label="Product Information Detail Form"/>
+		<mx:FormItem label="Product_Id">
+			<s:TextInput id="txtId" width="150" editable="false"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Name">
+			<s:TextInput id="txtName" width="150" editable="true"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Code">
+			<s:TextInput id="txtCode" width="150" editable="true"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Cost">
+			<s:TextInput id="txtCost" width="150" editable="true"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Price">
+			<s:TextInput id="txtPrice" width="150" editable="true"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Category_ID">
+			<mx:ComboBox id="cboCatId" width="150" dataProvider="{catList}" labelField="id" change="getCatById(cboCatId.selectedIndex)"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Desc">
+			<s:TextArea id="txtDesc" width="150" height="50" editable="false"/>
+		</mx:FormItem>
+		
+		<s:HGroup gap="10" paddingLeft="10" paddingRight="10" paddingTop="5" width="253" horizontalAlign="right">
+			<s:Button id="btnClose" label="Close" click="closeEvent(event)"/>
+			<s:Button id="btnUpdate" label="Update" click="updateEvent(event)"/>
+			<s:Button id="btnDelete" label="Delete" click="confirmDeleteEvent(event)"/>
+		</s:HGroup>
+	</mx:Form>
+	
+</s:TitleWindow>

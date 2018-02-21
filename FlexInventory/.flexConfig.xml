@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+
+	<compiler>
+	
+		
+
+		<services>D:\Working\Inventory\Inventory\src\main\webapp\WEB-INF\flex\services-config.xml</services>
+
+		<locale>
+			<locale-element>en_US</locale-element>
+			<locale-element>fr_FR</locale-element>
+		</locale>
+
+
+		<keep-as3-metadata>
+		</keep-as3-metadata>
+
+		<namespaces>
+		</namespaces>
+		
+		<theme>
+		</theme>
+				
+	</compiler>
+	
+	
+	
+	
+	
+	<default-size>
+		<width>500</width>
+		<height>375</height>
+	</default-size>
+
+	<metadata>
+	</metadata>
+	
+</flex-config>

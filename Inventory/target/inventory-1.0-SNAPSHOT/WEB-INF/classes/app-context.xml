@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:context="http://www.springframework.org/schema/context"
+xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- Database Configuration -->
+	
+	<import resource="classpath:dataSource.xml"/>
+	<import resource="classpath:hibernate.xml"/>
+	
+	<!-- Bean Declaration -->
+	
+	<import resource="classpath:spring-context.xml" />
+	
+	<!-- Category: Struts 2: Mapping categoryActionImpl bean to CategoryActionImpl class -->
+<!-- 	<bean id="categoryAction" class="com.vecteurplus.inventory.action.impl.CategoryActionImpl" scope="prototype"> -->
+<!-- 		<property name="categoryService" ref="categoryService" /> -->
+<!-- 	</bean> -->
+
+	<!-- Product: Struts 2: Mapping productActionImpl bean to ProductActionImpl class -->
+<!-- 	<bean id="productAction" class="com.vecteurplus.inventory.action.impl.ProductActionImpl" scope="prototype"> -->
+<!-- 		<property name="productService" ref="productService" /> -->
+<!-- 	</bean> -->
+	
+	<!-- Stock: Struts 2: Mapping stockActionImpl bean to StockActionImpl class  -->
+<!-- 	<bean id="stockAction" class="com.vecteurplus.inventory.action.impl.StockActionImpl" scope="prototype"> -->
+<!-- 		<property name="stockService" ref="stockService" /> -->
+<!-- 	</bean> -->
+	
+</beans>

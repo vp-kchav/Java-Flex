@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 doubleClickEnabled="true"
+		 creationComplete="init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.StockEvent;
+			import com.vecteurplus.inventory.model.Stock;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			
+			private var _stocks:ArrayCollection;
+			private var stockFormPopUp:StockFormPopUp = new StockFormPopUp();
+			
+			public function set stocks(sts:ArrayCollection):void {
+				_stocks = sts;
+			}
+			
+			[Bindable]
+			public function get stocks():ArrayCollection {
+				return _stocks;
+			}
+			
+			public function init():void {
+				var stockEvent:StockEvent = new StockEvent(StockEvent.GET_ALL_STOCKS);
+				dispatchEvent(stockEvent);
+			}
+			
+			protected function showPopUpEvent(event:MouseEvent):void {
+				var stock:Stock = stockList.selectedItem as Stock;
+				var stockEvent:StockEvent = new StockEvent(StockEvent.DISPLAY_SELECTED_STOCK);
+				stockEvent.stock = stock;
+				dispatchEvent(stockEvent);
+				PopUpManager.addPopUp(stockFormPopUp, this, true);
+				PopUpManager.centerPopUp(stockFormPopUp);
+			}
+			
+			protected function stockListClickEvent(event:Event):void {
+				var stock:Stock = stockList.selectedItem as Stock;
+				var stockEvent:StockEvent = new StockEvent(StockEvent.GET_SELECTED_STOCK);
+				stockEvent.stock = stock;
+				dispatchEvent(stockEvent);
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:DataGrid id="stockList" width="100%" height="100%" dataProvider="{stocks}"
+				 click="stockListClickEvent(event)"
+				 doubleClick="showPopUpEvent(event)">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Stock_Id"
+							   dataField="id"/>
+			<!--possible??? -->
+			<mx:DataGridColumn headerText="Product"
+							   dataField="product.name"/>
+			<mx:DataGridColumn headerText="Stock_Qty"
+							   dataField="quantity"/>
+			<mx:DataGridColumn headerText="Stock_Code"
+							   dataField="code"/>
+		</mx:columns>
+	</mx:DataGrid>
+</s:Group>

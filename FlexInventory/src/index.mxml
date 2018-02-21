@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   minWidth="955" minHeight="600"
+			   xmlns:map="com.vecteurplus.inventory.map.*"
+			   xmlns:view="com.vecteurplus.inventory.view.*">
+	
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle"/>
+	</s:layout>
+	
+	<fx:Declarations>
+		<map:MainEventMap/>
+	</fx:Declarations>
+	
+	<s:Panel width="100%" height="100%" title="Inventory Management">
+		<s:BorderContainer width="100%" height="100%">
+		<s:TabBar id="tabs" dataProvider="{inventory}"/>
+		<mx:ViewStack id="inventory" width="100%" height="100%">
+			<s:NavigatorContent label="Category Information" width="100%" height="100%">
+				<s:Panel width="100%" height="100%" x="0" y="25">
+					<s:layout>
+						<s:VerticalLayout horizontalAlign="center"/>
+					</s:layout>
+					<mx:Box>
+						<view:CategoryForm id="categoryForm"/>
+					</mx:Box>
+					<mx:Box paddingTop="10" paddingBottom="10">
+						<view:CategorySearchBox/>
+					</mx:Box>
+					<mx:Box>
+						<view:CategoryList width="700" height="250"/>
+					</mx:Box>
+				</s:Panel>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent label="Product Information" width="100%" height="100%">
+				<s:Panel width="100%" height="100%" x="0" y="25">
+					<s:layout>
+						<s:VerticalLayout horizontalAlign="center"/>
+					</s:layout>
+					<mx:Box>
+						<view:ProductForm id="productForm"/>
+					</mx:Box>
+					<mx:Box paddingTop="10" paddingBottom="10">
+						<view:ProductSearchBox/>
+					</mx:Box>
+					<mx:Box>
+						<view:ProductList width="700" height="250"/>
+					</mx:Box>
+				</s:Panel>
+			</s:NavigatorContent>
+			
+			<s:NavigatorContent label="Stock Information" width="100%" height="100%">
+				<s:Panel width="100%" height="100%" x="0" y="25">
+					<s:layout>
+						<s:VerticalLayout horizontalAlign="center"/>
+					</s:layout>
+					<mx:Box>
+						<view:StockForm id="stockForm"/>
+					</mx:Box>
+					<mx:Box paddingTop="10" paddingBottom="10">
+						<view:StockSearchBox/>
+					</mx:Box>
+					<mx:Box>
+						<view:StockList width="700" height="250"/>
+					</mx:Box>
+				</s:Panel>
+			</s:NavigatorContent>
+			
+		</mx:ViewStack>
+		</s:BorderContainer>
+	</s:Panel>
+</s:Application>

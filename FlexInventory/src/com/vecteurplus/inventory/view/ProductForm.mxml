@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 updateComplete="init()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:Array id="validators">
+			<mx:StringValidator source="{txtName}"
+								property="text"
+								required="true"
+								minLength="5"
+								maxLength="30"/>
+			<mx:StringValidator source="{txtCode}"
+								property="text"
+								required="true"
+								minLength="5"
+								maxLength="10"/>
+			<mx:StringValidator source="{txtDesc}"
+								property="text"
+								required="true"
+								minLength="10"
+								maxLength="50"/>
+			<mx:NumberValidator source="{txtCost}"
+								property="text"
+								required="true"/>
+			<mx:NumberValidator source="{txtPrice}"
+								property="text"
+								required="true"/>
+		</fx:Array>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.CategoryEvent;
+			import com.vecteurplus.inventory.event.ProductEvent;
+			import com.vecteurplus.inventory.model.Category;
+			import com.vecteurplus.inventory.model.Product;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.validators.Validator;
+			
+			private var _catList:ArrayCollection;
+			
+			public function set catList(catIds:ArrayCollection):void {
+				_catList = catIds;
+			}
+			
+			[Bindable]
+			public function get catList():ArrayCollection {
+				return _catList;
+			}
+			
+			private function saveEvent(event:MouseEvent):void {
+				var product:Product = new Product();
+				product.name = txtName.text;
+				product.code = txtCode.text;
+				product.cost = Number(txtCost.text);
+				product.price = Number(txtPrice.text);
+				product.description = txtDesc.text;
+				product.category = cboCatId.selectedItem as Category;
+				
+				var errors:Array = Validator.validateAll(validators);
+				if(errors.length > 0) {
+					Alert.show("Please fill in all required fields");
+				}
+				else {
+					var productEvent:ProductEvent = new ProductEvent(ProductEvent.SAVE_PRODUCT);
+					productEvent.product = product;
+					dispatchEvent(productEvent);
+					clearControls();
+				}
+			}
+			
+			public function clearControls():void {
+				txtName.text = "";
+				txtCode.text = "";
+				txtCost.text = "";
+				txtPrice.text = "";
+				txtDesc.text = "";
+			}
+			
+			
+			public function init():void {
+				var productEvent:ProductEvent = new ProductEvent(ProductEvent.GET_ALL_PRODUCTS);
+				dispatchEvent(productEvent);
+			}
+			
+			private function loadCategoryId():void{
+				var categoryEvent:CategoryEvent = new CategoryEvent(CategoryEvent.GET_ALL_CATEGORIES);
+				dispatchEvent(categoryEvent);
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:Form>
+		<mx:FormHeading label="Product Information Form"/>
+		<mx:FormItem label="Product_ID">
+			<mx:TextInput id="txtId" enabled="false" text="Auto-Number" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Name" required="true">
+			<mx:TextInput id="txtName" restrict="a-z A-Z0-9" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Code" required="true">
+			<mx:TextInput id="txtCode" restrict="A-Z0-9" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Cost" required="true">
+			<mx:TextInput id="txtCost" restrict="0-9.{1}" width="150"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Product_Price" required="true">
+			<mx:TextInput id="txtPrice" restrict="0-9.{1}" width="150"/>
+		</mx:FormItem>
+		
+		<!-- check it again later-->
+		<mx:FormItem label="Category" required="true">
+			<mx:ComboBox id="cboCatId" width="150" dataProvider="{catList}" labelField="name"/>
+		</mx:FormItem>
+		
+		<mx:FormItem label="Description">
+			<mx:TextArea id="txtDesc" restrict="a-zA-Z0-9" width="150" height="50"/>
+		</mx:FormItem>
+		
+		<mx:FormItem horizontalAlign="center">
+			<mx:Button id="btnSave" label="Save" click="saveEvent(event)"/>
+		</mx:FormItem>
+	</mx:Form>
+</s:Group>

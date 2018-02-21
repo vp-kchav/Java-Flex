@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.CategoryEvent;
+			import com.vecteurplus.inventory.manager.CategoryManager;
+			import com.vecteurplus.inventory.view.CategoryForm;
+			import com.vecteurplus.inventory.view.CategoryFormPopUp;
+			import com.vecteurplus.inventory.view.CategoryList;
+			import com.vecteurplus.inventory.view.ProductForm;
+			import com.vecteurplus.inventory.view.ProductFormPopUp;
+			
+			import org.granite.rpc.remoting.mxml.SecureRemoteObject;
+			
+			[Bindable]
+			public var secureRemoteObject:SecureRemoteObject;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<EventHandlers type="{CategoryEvent.GET_ALL_CATEGORIES}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="getAll"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{CategoryManager}"
+								   method="storeCategories"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{CategoryEvent.SEARCH_CATEGORY}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="getById"
+								 arguments="{event.categoryId}"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{CategoryManager}"
+								   method="storeCategories"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+					   
+		<EventHandlers type="{CategoryEvent.DISPLAY_SELECTED_CATEGORY}">
+			<MethodInvoker generator="{CategoryManager}"
+						   method="storeUpdatedCategory"
+						   arguments="{event.category}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{CategoryEvent.GET_SELECTED_CATEGORY}">
+			<MethodInvoker generator="{CategoryManager}"
+						   method="storeDeletedCategory"
+						   arguments="{event.category}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{CategoryEvent.SAVE_CATEGORY}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="save"
+								 arguments="{event.category}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{CategoryEvent.GET_ALL_CATEGORIES}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{CategoryEvent.UPDATE_CATEGORY}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="update"
+								 arguments="{event.category}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{CategoryEvent.GET_ALL_CATEGORIES}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{CategoryEvent.DELETE_CATEGORY}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="categoryService"
+								 method="deleteById"
+								 arguments="{event.category.id}"
+								 debug="true">
+				<!--arguments="{event.category.id}"-->
+				<resultHandlers>
+					<EventAnnouncer type="{CategoryEvent.GET_ALL_CATEGORIES}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers> 
+		
+		<Injectors target="{CategoryList}">
+			<PropertyInjector targetKey="categories" source="{CategoryManager}" sourceKey="currentCategories"/>
+		</Injectors>
+		
+		<Injectors target="{ProductForm}">
+			<PropertyInjector targetKey="catList" source="{CategoryManager}" sourceKey="currentCategories"/>
+		</Injectors>
+		
+		<Injectors target="{CategoryFormPopUp}">
+			<PropertyInjector targetKey="category" source="{CategoryManager}" sourceKey="updatedCategory"/>
+		</Injectors>
+		
+		<Injectors target="{CategoryFormPopUp}">
+			<PropertyInjector targetKey="selectedCategory" source="{CategoryManager}" sourceKey="deletedCategory"/>
+		</Injectors>
+		
+	</fx:Declarations>
+	
+</EventMap>

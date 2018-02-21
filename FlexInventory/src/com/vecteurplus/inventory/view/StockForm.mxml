@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:Array id="validators">
+			<mx:StringValidator source="{txtCode}"
+								property="text"
+								required="true"
+								minLength="5"
+								maxLength="10"/>
+		<mx:NumberValidator source="{txtQty}"
+							property="text"
+							required="true"/>
+							
+		</fx:Array>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.ProductEvent;
+			import com.vecteurplus.inventory.event.StockEvent;
+			import com.vecteurplus.inventory.model.Product;
+			import com.vecteurplus.inventory.model.Stock;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.validators.Validator;
+			
+			private var _proIdList:ArrayCollection;
+			
+			public function set proIdList(proIds:ArrayCollection):void {
+				_proIdList = proIds;
+			}
+			
+			[Bindable]
+			public function get proIdList():ArrayCollection {
+				return _proIdList;
+			}
+				
+			private function saveEvent(event:MouseEvent):void {
+				var stock:Stock = new Stock();
+				stock.code = txtCode.text;
+				stock.quantity = int(txtQty.text);
+				stock.product = cboProId.selectedItem as Product;
+				
+				var errors:Array = Validator.validateAll(validators);
+				if(errors.length > 0) {
+					Alert.show("Please fill in all required fields");
+				}
+				else {
+					var stockEvent:StockEvent = new StockEvent(StockEvent.SAVE_STOCK);
+					stockEvent.stock = stock;
+					dispatchEvent(stockEvent);
+					clearControls();
+				}
+			}
+			
+			public function clearControls():void {
+				txtQty.text = "";
+				txtCode.text = "";
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:Form>
+		<mx:FormHeading label="Stock Information Form"/>
+		<mx:FormItem label="ID">
+			<s:TextInput id="txtId" enabled="false" text="Auto-Number" width="150"/>
+		</mx:FormItem>
+		<mx:FormItem label="Product name">
+			<s:ComboBox id="cboProId" width="150" dataProvider="{proIdList}" labelField="name"/>
+		</mx:FormItem>
+		<mx:FormItem label="Qty">
+			<s:TextInput id="txtQty" restrict="0-9" width="150"/>
+		</mx:FormItem>
+		<mx:FormItem label="Code">
+			<s:TextInput id="txtCode" restrict="a-zA-Z0-9" width="150"/>
+		</mx:FormItem>
+
+		<mx:FormItem horizontalAlign="center">
+			<s:Button id="btnSave" label="Save" click="saveEvent(event)"/>
+		</mx:FormItem>
+	</mx:Form>
+</s:Group>

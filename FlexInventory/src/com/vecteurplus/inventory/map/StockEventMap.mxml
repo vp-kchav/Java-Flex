@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns="http://mate.asfusion.com/">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.vecteurplus.inventory.event.StockEvent;
+			import com.vecteurplus.inventory.manager.StockManager;
+			import com.vecteurplus.inventory.view.StockForm;
+			import com.vecteurplus.inventory.view.StockFormPopUp;
+			import com.vecteurplus.inventory.view.StockList;
+			
+			import org.granite.rpc.remoting.mxml.SecureRemoteObject;
+			
+			[Bindable]
+			public var secureRemoteObject:SecureRemoteObject;
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<EventHandlers type="{StockEvent.GET_ALL_STOCKS}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="stockService"
+								 method="getAll"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{StockManager}"
+								   method="storeStocks"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.SEARCH_STOCK}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="stockService"
+								 method="getById"
+								 arguments="{event.stockId}"
+								 debug="true">
+				<resultHandlers>
+					<MethodInvoker generator="{StockManager}"
+								   method="storeStocks"
+								   arguments="{resultObject}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.DISPLAY_SELECTED_STOCK}">
+			<MethodInvoker generator="{StockManager}"
+						   method="storeUpdatedStock"
+						   arguments="{event.stock}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.GET_SELECTED_STOCK}">
+			<MethodInvoker generator="{StockManager}"
+						   method="storeDeletedStock"
+						   arguments="{event.stock}"/>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.SAVE_STOCK}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="stockService"
+								 method="save"
+								 arguments="{event.stock}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{StockEvent.GET_ALL_STOCKS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.UPDATE_STOCK}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="stockService"
+								 method="update"
+								 arguments="{event.stock}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{StockEvent.GET_ALL_STOCKS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers>
+		
+		<EventHandlers type="{StockEvent.DELETE_STOCK}">
+			<RemoteObjectInvoker instance="{secureRemoteObject}"
+								 destination="stockService"
+								 method="delete"
+								 arguments="{event.stock.id}"
+								 debug="true">
+				<resultHandlers>
+					<EventAnnouncer type="{StockEvent.GET_ALL_STOCKS}"/>
+				</resultHandlers>
+			</RemoteObjectInvoker>
+		</EventHandlers> 
+		
+		<Injectors target="{StockList}">
+			<PropertyInjector targetKey="stocks" source="{StockManager}" sourceKey="currentStocks" />
+		</Injectors>
+		
+		<Injectors target="{StockFormPopUp}">
+			<PropertyInjector targetKey="stock" source="{StockManager}" sourceKey="updatedStock" />
+		</Injectors>
+		
+		<Injectors target="{StockFormPopUp}">
+			<PropertyInjector targetKey="selectedStock" source="{StockManager}" sourceKey="deletedStock" />
+		</Injectors>
+	</fx:Declarations>
+	
+</EventMap>

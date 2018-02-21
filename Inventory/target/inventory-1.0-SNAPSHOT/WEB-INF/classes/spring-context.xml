@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+<!-- Category Data Access Object -->
+<bean id="categoryDao" class="com.vecteurplus.inventory.dao.impl.CategoryDaoImpl">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+
+<!-- CategoryService Accessing Configuration -->
+<bean id="categoryService" class="com.vecteurplus.inventory.service.impl.CategoryServiceImpl">
+	<property name="categoryDao">
+			<ref bean="categoryDao" />
+	</property>
+</bean>
+
+<!-- Category: Struts 2: Mapping categoryActionImpl bean to CategoryActionImpl class -->
+<bean id="categoryAction" class="com.vecteurplus.inventory.action.impl.CategoryActionImpl" scope="prototype">
+	<property name="categoryService" ref="categoryService" />
+</bean>
+
+
+<!-- Product Data Access Object -->
+<bean id="productDao" class="com.vecteurplus.inventory.dao.impl.ProductDaoImpl">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+
+<!-- ProductService Accessing Configuration -->
+<bean id="productService" class="com.vecteurplus.inventory.service.impl.ProductServiceImpl">
+	<property name="productDao">
+			<ref bean="productDao" />
+	</property>
+</bean>
+
+<!-- Product: Struts 2: Mapping productActionImpl bean to ProductActionImpl class -->
+<bean id="productAction" class="com.vecteurplus.inventory.action.impl.ProductActionImpl" scope="prototype">
+	<property name="productService" ref="productService" />
+</bean>
+
+
+<!--  Stock Data Access Object -->
+<bean id="stockDao" class="com.vecteurplus.inventory.dao.impl.StockDaoImpl">
+	<property name="sessionFactory" ref="sessionFactory" />
+</bean>
+
+<!-- StockService Accessing Configuration -->
+<bean id="stockService" class="com.vecteurplus.inventory.service.impl.StockServiceImpl">
+	<property name="stockDao">
+			<ref bean="stockDao" />
+	</property>
+</bean>
+
+<!-- Stock: Struts 2: Mapping stockActionImpl bean to StockActionImpl class  -->
+<bean id="stockAction" class="com.vecteurplus.inventory.action.impl.StockActionImpl" scope="prototype">
+	<property name="stockService" ref="stockService" />
+</bean>
+
+</beans>
